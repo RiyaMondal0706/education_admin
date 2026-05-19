@@ -16,7 +16,7 @@ Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');
 // Protected route
 Route::get('/dashboard', function () {
     return view('Admin/dashboard');
-})->middleware('user.auth');
+})->middleware('user.auth')->name('admin.dashboard');
 
 Route::get('/student/create', function () {
     return view('Admin/student_create');
@@ -25,3 +25,7 @@ Route::get('/student/create', function () {
 Route::post('/student/store', [AdminController::class, 'student_store'])
     ->middleware('user.auth')
     ->name('student.store');
+
+ Route::get('/admin/students', [AdminController::class, 'student_list'])
+    ->middleware('user.auth')
+    ->name('admin.students.list');

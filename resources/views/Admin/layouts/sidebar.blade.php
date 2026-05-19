@@ -9,12 +9,13 @@
 
       <!-- Navigation Links -->
       <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          <a href="#"
+          <a href="{{ route('admin.dashboard') }}"
               class="flex items-center gap-3 px-4 py-3 text-sm font-medium bg-indigo-600 rounded-lg text-white transition-all">
               <i class="fa-solid fa-chart-pie w-5"></i> Dashboard
           </a>
-          <a href="#"
+          <a href="{{ route('admin.students.list') }}"
               class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-all">
+
               <i class="fa-solid fa-user-graduate w-5"></i> Students
           </a>
           <a href="#"
