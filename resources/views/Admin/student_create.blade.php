@@ -200,8 +200,10 @@
                                     <label
                                         class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">Phone
                                         Number *</label>
-                                    <input type="tel" required placeholder="+1 (555) 000-0000" name="phone"
-                                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50/50">
+                                    <input type="tel" name="phone" maxlength="10" pattern="[6-9]{1}[0-9]{9}"
+                                        required placeholder="Enter 10 digit mobile number"
+                                        class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50/50"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)">
                                 </div>
                             </div>
                             <div class="space-y-4">
@@ -232,8 +234,10 @@
                                         <label
                                             class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1.5">pin
                                             Code *</label>
-                                        <input type="text" required placeholder="02108" name="zip"
-                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50/50">
+                                        <input type="text" required placeholder="700001" name="zip"
+                                            maxlength="6" pattern="[0-9]{6}"
+                                            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50/50"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,6)">
                                     </div>
                                 </div>
                             </div>
@@ -294,6 +298,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
     <script>
         const Toast = Swal.mixin({
             toast: true,
@@ -335,11 +340,46 @@
     </script>
 
     @if (session('success'))
-        <div class="bg-green-100 text-green-700 p-3 rounded mb-4">
-            {{ session('success') }}
-        </div>
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#4f46e5',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        </script>
     @endif
 
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#dc2626'
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            let errorMessages = '';
+
+            @foreach ($errors->all() as $error)
+
+                errorMessages += '• {{ $error }}\n';
+            @endforeach
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: errorMessages,
+                confirmButtonColor: '#f59e0b'
+            });
+        </script>
+    @endif
 
 </body>
 

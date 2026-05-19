@@ -29,3 +29,5 @@ Route::post('/student/store', [AdminController::class, 'student_store'])
  Route::get('/admin/students', [AdminController::class, 'student_list'])
     ->middleware('user.auth')
     ->name('admin.students.list');
+
+    
