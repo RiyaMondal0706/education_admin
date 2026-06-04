@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserAuthController;
 use App\Http\Controllers\AdminController;
 
-Route::get('/' , function(){
+Route::get('/', function () {
     return view('welcome');
 });
 
@@ -26,8 +26,32 @@ Route::post('/student/store', [AdminController::class, 'student_store'])
     ->middleware('user.auth')
     ->name('student.store');
 
- Route::get('/admin/students', [AdminController::class, 'student_list'])
+Route::get('/admin/students', [AdminController::class, 'student_list'])
     ->middleware('user.auth')
     ->name('admin.students.list');
 
-    
+Route::get('/students/export-csv', [AdminController::class, 'exportCsv'])
+    ->middleware('user.auth')
+    ->name('students.export.csv');
+
+Route::post('/students/{id}/toggle-status', [AdminController::class, 'toggleStatus'])
+    ->middleware('user.auth')
+    ->name('students.toggle-status');
+
+    Route::get('/students/{id}', [AdminController::class, 'show'])
+      ->middleware('user.auth')
+    ->name('students.show');
+
+
+
+Route::get('/admin/teachers', [AdminController::class, 'teacher_list'])
+    ->middleware('user.auth')
+    ->name('admin.teachers.list');
+
+Route::get('/admin/teacher/create', [AdminController::class, 'teacher_create'])
+    ->middleware('user.auth')
+    ->name('teacher.create');
+
+Route::post('/admin/teacher/store', [AdminController::class, 'teacher_store'])
+    ->middleware('user.auth')
+    ->name('teacher.store');

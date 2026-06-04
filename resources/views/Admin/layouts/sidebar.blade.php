@@ -18,7 +18,7 @@
 
               <i class="fa-solid fa-user-graduate w-5"></i> Students
           </a>
-          <a href="#"
+          <a href="{{ route('admin.teachers.list') }}"
               class="flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white rounded-lg transition-all">
               <i class="fa-solid fa-chalkboard-user w-5"></i> Teachers
           </a>

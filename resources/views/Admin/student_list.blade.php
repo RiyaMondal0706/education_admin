@@ -57,7 +57,7 @@
                 <!-- Action Title Header -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Student Directory</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">Student List</h1>
                         <p class="text-sm text-gray-500 mt-1">View, search, and manage comprehensive enrolled student
                             profiles.</p>
                     </div>
@@ -151,14 +151,11 @@
                         <!-- Right: Utilities -->
                         <div class="flex items-center gap-2 self-end lg:self-auto">
 
-                            <button type="button"
+                            <a href="{{ route('students.export.csv', request()->query()) }}"
                                 class="inline-flex items-center gap-2 px-3 py-2 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium transition-colors">
-
                                 <i class="fa-solid fa-download"></i>
-
                                 Export CSV
-
-                            </button>
+                            </a>
 
                             <button type="button"
                                 class="p-2 border border-gray-200 hover:bg-gray-50 text-gray-500 hover:text-gray-700 rounded-lg transition-colors">
@@ -188,11 +185,11 @@
                                     <th class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="studentTableBody" class="divide-y divide-gray-200 text-sm">
 
-                                @include('Admin.ajax.student_table')
 
-                            </tbody>
+                            @include('Admin.ajax.student_table')
+
+
                         </table>
                     </div>
                     <div class="mt-6">
@@ -203,15 +200,61 @@
 
                     <!-- Table Pagination Footer -->
                     <div class="bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-between">
-                        <span class="text-sm text-gray-500">Showing <span class="font-medium text-gray-700">1</span>
-                            to <span class="font-medium text-gray-700">3</span> of <span
-                                class="font-medium text-gray-700">42</span> students</span>
+
+                        <span class="text-sm text-gray-500">
+                            Showing
+                            <span class="font-medium text-gray-700">{{ $students->firstItem() }}</span>
+                            to
+                            <span class="font-medium text-gray-700">{{ $students->lastItem() }}</span>
+                            of
+                            <span class="font-medium text-gray-700">{{ $students->total() }}</span>
+                            students
+                        </span>
+
                         <div class="inline-flex items-center gap-2">
-                            <button disabled
-                                class="px-3 py-1.5 border border-gray-200 text-gray-400 rounded-lg text-xs font-medium cursor-not-allowed bg-gray-50">Previous</button>
-                            <button
-                                class="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-medium transition-colors">Next</button>
+
+                            {{-- Previous Button --}}
+                            @if ($students->onFirstPage())
+                                <button disabled
+                                    class="px-3 py-1.5 border border-gray-200 text-gray-400 rounded-lg text-xs font-medium cursor-not-allowed bg-gray-50">
+                                    Previous
+                                </button>
+                            @else
+                                <a href="{{ $students->previousPageUrl() }}"
+                                    class="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-medium transition-colors">
+                                    Previous
+                                </a>
+                            @endif
+
+                            {{-- Page Numbers --}}
+                            @foreach ($students->getUrlRange(1, $students->lastPage()) as $page => $url)
+                                @if ($page == $students->currentPage())
+                                    <span class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-medium">
+                                        {{ $page }}
+                                    </span>
+                                @else
+                                    <a href="{{ $url }}"
+                                        class="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-medium transition-colors">
+                                        {{ $page }}
+                                    </a>
+                                @endif
+                            @endforeach
+
+                            {{-- Next Button --}}
+                            @if ($students->hasMorePages())
+                                <a href="{{ $students->nextPageUrl() }}"
+                                    class="px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-medium transition-colors">
+                                    Next
+                                </a>
+                            @else
+                                <button disabled
+                                    class="px-3 py-1.5 border border-gray-200 text-gray-400 rounded-lg text-xs font-medium cursor-not-allowed bg-gray-50">
+                                    Next
+                                </button>
+                            @endif
+
                         </div>
+
                     </div>
                 </div>
 

@@ -51,41 +51,46 @@
 
             <!-- Status -->
             <td class="px-6 py-4">
+                <form action="{{ route('students.toggle-status', $student->id) }}" method="POST">
+                    @csrf
 
-                <span
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
-
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-
-                    Active
-
-                </span>
-
+                    <button type="submit">
+                        @if ($student->status)
+                            <span
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                Active
+                            </span>
+                        @else
+                            <span
+                                class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                Inactive
+                            </span>
+                        @endif
+                    </button>
+                </form>
             </td>
 
             <!-- Actions -->
             <td class="px-6 py-4 text-right">
 
-                <div class="flex items-center justify-end gap-2">
+                <div class="flex justify-end gap-2">
 
-                    <a href="#"
-                        class="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-100 transition-all">
+                    <a href="{{ route('students.show', $student->id) }}"
+                        class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg">
+                        <i class="fa-regular fa-eye"></i>
+                    </a>
 
-                        <i class="fa-regular fa-eye text-base"></i>
+                    <a href="#" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg">
+
+                        <i class="fa-regular fa-pen-to-square"></i>
 
                     </a>
 
-                    <a href="#"
-                        class="p-1.5 text-gray-400 hover:text-amber-600 rounded-lg hover:bg-gray-100 transition-all">
+                    <a href="#" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg">
 
-                        <i class="fa-regular fa-pen-to-square text-base"></i>
-
-                    </a>
-
-                    <a href="#"
-                        class="p-1.5 text-gray-400 hover:text-rose-600 rounded-lg hover:bg-gray-100 transition-all">
-
-                        <i class="fa-regular fa-trash-can text-base"></i>
+                        <i class="fa-regular fa-trash-can"></i>
 
                     </a>
 
