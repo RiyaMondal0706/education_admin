@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Teacher;
+use Illuminate\Support\Facades\Crypt;
 
 
 class AdminController extends Controller
@@ -407,21 +408,234 @@ class AdminController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+
+
+
     public function toggleStatus($id)
     {
-        $student = Student::findOrFail($id);
+        try {
 
-        $student->status = !$student->status;
+            $id = Crypt::decryptString($id);
 
-        $student->save();
+            $student = Student::findOrFail($id);
 
-        return back()->with('success', 'Status updated successfully.');
+            $student->status = !$student->status;
+
+            $student->save();
+
+            return back()->with('success', 'Status updated successfully.');
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Invalid student ID.');
+        }
     }
 
-    public function show($id)
-{
-    $student = Student::findOrFail($id);
+    public function student_show($id)
+    {
+        try {
 
-    return view('Admin.student_profile', compact('student'));
-}
+            $id = Crypt::decryptString($id);
+
+            $student = Student::findOrFail($id);
+
+            return view('Admin.student_profile', compact('student'));
+        } catch (\Exception $e) {
+
+            abort(404);
+        }
+    }
+
+    public function student_edit($id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $student = Student::findOrFail($id);
+
+            return view('Admin.student_edit', compact('student'));
+        } catch (\Exception $e) {
+
+            abort(404);
+        }
+    }
+
+    public function student_update(Request $request, $id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $student = Student::findOrFail($id);
+
+            $student->update([
+                'first_name'     => $request->first_name,
+                'last_name'      => $request->last_name,
+                'dob'            => $request->dob,
+                'gender'         => $request->gender,
+                'blood_group'    => $request->blood_group,
+                'nationality'    => $request->nationality,
+                'student_id'     => $request->student_id,
+                'admission_date' => $request->admission_date,
+                'department'     => $request->department,
+                'semester'       => $request->semester,
+                'email'          => $request->email,
+                'phone'          => $request->phone,
+                'address'        => $request->address,
+                'city'           => $request->city,
+                'state'          => $request->state,
+                'zip'            => $request->zip,
+                'status'         => $request->status,
+            ]);
+
+            return redirect()
+                ->route('admin.students.list')
+                ->with('success', 'Student updated successfully.');
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Invalid student ID.');
+        }
+    }
+    public function student_delete($id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $student = Student::findOrFail($id);
+
+            // Delete matching user by email
+            $user = User::where('email', $student->email)->first();
+
+            if ($user) {
+                $user->delete();
+            }
+
+            // Delete photo
+            if (
+                !empty($student->photo) &&
+                file_exists(public_path('uploads/students/' . $student->photo))
+            ) {
+                unlink(public_path('uploads/students/' . $student->photo));
+            }
+
+            // Delete student
+            $student->delete();
+
+            return redirect()
+                ->route('admin.students.list')
+                ->with('success', 'Student and user account deleted successfully.');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+
+    public function teacher_show($id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $teacher = Teacher::findOrFail($id);
+
+            return view('Admin.teacher_profile', compact('teacher'));
+        } catch (\Exception $e) {
+
+            abort(404);
+        }
+    }
+
+    public function teacher_edit($id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $teacher = Teacher::findOrFail($id);
+
+            return view('Admin.teacher_edit', compact('teacher'));
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->route('admin.teachers.list')
+                ->with('error', 'Invalid Teacher ID.');
+        }
+    }
+
+    public function teacher_update(Request $request, $id)
+    {
+        try {
+
+            $id = Crypt::decryptString($id);
+
+            $teacher = Teacher::findOrFail($id);
+
+            $teacher->update([
+                'first_name'    => $request->first_name,
+                'last_name'     => $request->last_name,
+                'dob'           => $request->dob,
+                'gender'        => $request->gender,
+                'blood_group'   => $request->blood_group,
+                'nationality'   => $request->nationality,
+                'teacher_id'    => $request->teacher_id,
+                'joining_date'  => $request->joining_date,
+                'department'    => $request->department,
+                'designation'   => $request->designation,
+                'qualification' => $request->qualification,
+                'experience'    => $request->experience,
+                'email'         => $request->email,
+                'phone'         => $request->phone,
+                'address'       => $request->address,
+                'city'          => $request->city,
+                'state'         => $request->state,
+                'zip'           => $request->zip,
+            ]);
+
+            return redirect()
+                ->route('admin.teachers.list')
+                ->with('success', 'Teacher updated successfully.');
+        } catch (\Exception $e) {
+
+            return back()
+                ->with('error', 'Something went wrong.');
+        }
+    }
+
+
+    public function teacher_delete($id)
+    {
+        try {
+
+            $teacherId = Crypt::decryptString($id);
+
+            $teacher = Teacher::findOrFail($teacherId);
+
+            // Delete user record by email
+            User::where('email', $teacher->email)->delete();
+
+            // Delete teacher photo
+            if (
+                !empty($teacher->photo) &&
+                file_exists(public_path('uploads/teachers/' . $teacher->photo))
+            ) {
+                unlink(public_path('uploads/teachers/' . $teacher->photo));
+            }
+
+            // Delete teacher
+            $teacher->delete();
+
+            return redirect()
+                ->route('admin.teachers.list')
+                ->with('success', 'Teacher deleted successfully.');
+        } catch (\Exception $e) {
+
+            return redirect()
+                ->route('admin.teachers.list')
+                ->with('error', 'Invalid Teacher ID.');
+        }
+    }
 }

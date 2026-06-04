@@ -51,7 +51,10 @@
 
             <!-- Status -->
             <td class="px-6 py-4">
-                <form action="{{ route('students.toggle-status', $student->id) }}" method="POST">
+                @php
+                    $encryptedId = Crypt::encryptString($student->id);
+                @endphp
+                <form action="{{ route('students.toggle-status', $encryptedId) }}" method="POST">
                     @csrf
 
                     <button type="submit">
@@ -77,22 +80,28 @@
 
                 <div class="flex justify-end gap-2">
 
-                    <a href="{{ route('students.show', $student->id) }}"
+                    <a href="{{ route('students.show', Crypt::encryptString($student->id)) }}"
                         class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg">
                         <i class="fa-regular fa-eye"></i>
                     </a>
 
-                    <a href="#" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg">
-
+                    <a href="{{ route('students.edit', Crypt::encryptString($student->id)) }}"
+                        class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg">
                         <i class="fa-regular fa-pen-to-square"></i>
-
                     </a>
+                    <form id="delete-form-{{ $student->id }}"
+                        action="{{ route('students.delete', Crypt::encryptString($student->id)) }}" method="POST"
+                        class="inline">
 
-                    <a href="#" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg">
+                        @csrf
+                        @method('DELETE')
 
-                        <i class="fa-regular fa-trash-can"></i>
+                        <button type="button" onclick="confirmDelete('{{ $student->id }}')"
+                            class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
 
-                    </a>
+                    </form>
 
                 </div>
 
@@ -114,3 +123,25 @@
     @endforelse
 
 </tbody>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Delete Student?',
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc2626',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, Delete'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+
+        });
+    }
+</script>

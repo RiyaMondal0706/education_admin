@@ -236,21 +236,28 @@
 
                                             <div class="flex justify-end gap-2">
 
-                                                <a href="#"
+
+
+                                                <a href="{{ route('teachers.show', Crypt::encryptString($teacher->id)) }}"
                                                     class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg">
-
                                                     <i class="fa-regular fa-eye"></i>
-
                                                 </a>
 
-                                                <a href="#"
+                                                <a href="{{ route('teachers.edit', Crypt::encryptString($teacher->id)) }}"
                                                     class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg">
-
                                                     <i class="fa-regular fa-pen-to-square"></i>
-
                                                 </a>
 
-                                                <a href="#" class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg">
+                                                <form id="delete-form-{{ $teacher->id }}"
+                                                    action="{{ route('teachers.delete', Crypt::encryptString($teacher->id)) }}"
+                                                    method="POST" style="display:none;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+
+                                                <a href="javascript:void(0)"
+                                                    onclick="confirmDelete({{ $teacher->id }})"
+                                                    class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg">
 
                                                     <i class="fa-regular fa-trash-can"></i>
 
@@ -295,6 +302,30 @@
         </div>
 
     </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Delete Teacher?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+
+            });
+        }
+    </script>
+
+
 
 </body>
 
